@@ -23,7 +23,7 @@ def normalize_data(file):
     file = unicodedata.normalize("NFC", file)
     return file
 
-@app.route('/', method=['POST'])
+@app.route('/')
 def Home():
     return render_template('index.html')
 
