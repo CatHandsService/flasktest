@@ -43,7 +43,12 @@ def handle_upload():
             if re_prefixed_filename.endswith(('.xls', '.xlsx')):
                 df = pd.read_excel(filename, engine='openpyxl', index_col=None, header=None)
             elif re_prefixed_filename.endswith('.csv'):
-                df = pd.read_csv(filename, header=None, encoding='shift_jis')
+                try:
+                    # UTF-8-SIGで読み込みを試みる
+                    df = pd.read_csv(filename, index_col=None, header=None, encoding='utf-8-sig')
+                except UnicodeDecodeError:
+                    # UTF-8-SIGで読み込めない場合はshift-jisで再試行
+                    df = pd.read_csv(filename, index_col=None, header=None, encoding='shift-jis')
 
             # ファイルの内容をunicodedataで正規化
             df_normalized = df.applymap(lambda x: normalize_data(x) if pd.notna(x) else x)
